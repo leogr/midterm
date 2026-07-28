@@ -10,6 +10,12 @@ import (
 	"github.com/muesli/termenv"
 )
 
+// ApplicationCommandReceived handles Application Program Command (APC)
+// sequences (ESC _ ... ST), used by protocols like Kitty Graphics.
+func (v *Terminal) ApplicationCommandReceived(data []byte) {
+	dbg.Printf("ApplicationCommandReceived: %d bytes (ignored)\n", len(data))
+}
+
 // Backspace moves the cursor one position to the left.
 func (v *Terminal) Backspace() {
 	v.changed(v.Cursor.Y, true)
@@ -24,6 +30,11 @@ func (v *Terminal) Bell() {
 // CarriageReturn moves the cursor to the beginning of the line.
 func (v *Terminal) CarriageReturn() {
 	v.home(v.Cursor.Y, 0)
+}
+
+// CellSizePixels reports the cell size in pixels.
+func (v *Terminal) CellSizePixels() {
+	dbg.Println("TODO: CellSizePixels")
 }
 
 // ClearLine clears the line.
@@ -128,6 +139,11 @@ func (v *Terminal) DeleteChars(n int) {
 func (v *Terminal) DeleteLines(n int) {
 	dbg.Printf("DeleteLines: n=%d\n", n)
 	v.deleteLines(n)
+}
+
+// DesktopNotification handles OSC 99 desktop notifications (Kitty protocol).
+func (v *Terminal) DesktopNotification(payload *ansicode.NotificationPayload) {
+	dbg.Printf("DesktopNotification: payload=%+v (ignored)\n", payload)
 }
 
 // DeviceStatus reports the device status.
@@ -281,6 +297,11 @@ func (v *Terminal) PopKeyboardMode(n int) {
 // PopTitle pops the title from the stack.
 func (v *Terminal) PopTitle() {
 	dbg.Println("PopTitle (ignored)")
+}
+
+// PrivacyMessageReceived handles Privacy Message (PM) sequences (ESC ^ ... ST).
+func (v *Terminal) PrivacyMessageReceived(data []byte) {
+	dbg.Printf("PrivacyMessageReceived: %d bytes (ignored)\n", len(data))
 }
 
 // PushKeyboardMode pushes the given keyboard mode to the stack.
@@ -581,6 +602,32 @@ func attrColor(attr ansicode.TerminalCharAttribute) termenv.Color {
 func (v *Terminal) SetTitle(title string) {
 	dbg.Printf("SetTitle: title=%s\n", title)
 	v.Title = title
+}
+
+// SetUserVar sets a user variable (OSC 1337 SetUserVar), used by
+// iTerm2/WezTerm shell integration to pass metadata.
+func (v *Terminal) SetUserVar(name, value string) {
+	dbg.Printf("SetUserVar: %s=%s (ignored)\n", name, value)
+}
+
+// SetWorkingDirectory sets the current working directory (OSC 7).
+func (v *Terminal) SetWorkingDirectory(uri string) {
+	dbg.Printf("SetWorkingDirectory: uri=%s (ignored)\n", uri)
+}
+
+// ShellIntegrationMark handles shell integration marks (OSC 133).
+func (v *Terminal) ShellIntegrationMark(mark ansicode.ShellIntegrationMark, exitCode int) {
+	dbg.Printf("ShellIntegrationMark: mark=%v, exitCode=%d (ignored)\n", mark, exitCode)
+}
+
+// SixelReceived is called when a complete Sixel image sequence is received.
+func (v *Terminal) SixelReceived(params [][]uint16, data []byte) {
+	dbg.Printf("SixelReceived: params=%v, %d bytes (ignored)\n", params, len(data))
+}
+
+// StartOfStringReceived handles Start of String (SOS) sequences (ESC X ... ST).
+func (v *Terminal) StartOfStringReceived(data []byte) {
+	dbg.Printf("StartOfStringReceived: %d bytes (ignored)\n", len(data))
 }
 
 // Substitute replaces the character under the cursor.
